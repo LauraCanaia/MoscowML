@@ -22,7 +22,7 @@ type store = (loc * int) list
 type typeE = (loc * type_loc) list 
 
 (*definizione del "tipo primitivo" per la var*)
-type var = string
+type var_T = string
 
 
 (*Sintassi*)
@@ -37,7 +37,7 @@ datatype exp =
     |   While of exp * exp
     |   Deref of loc 
     (*Sintassi aggiunta per l'elaborato*)
-    |   Var of var (*Nuovo tipo per la var in quanto non può essere nè int nè un altro tipo primitivo*)
+    |   Var of var_T (*Nuovo tipo per la var in quanto non può essere nè int nè un altro tipo primitivo*)
     |   Fn of string * type_L * exp
     |   AppCBN of exp * exp
 
