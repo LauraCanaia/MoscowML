@@ -140,6 +140,12 @@ fun red (Integer n,s) = NONE
     (*Adding custom function for the assignement*)
     | red (Var (n),s) = NONE
     | red (Fn (variable, tipo, e), s) = NONE (*Versione CBN*)
+    | red (AppCBN(e1, e2), s) =
+      (case e1 of
+        Fn(x, t, e) => (SOME (sostituzione e2 x e, s))  (*caso in cui e1 sia una funzione andare a chiamare sostituire con e2 passato come espressione*)
+        | _ => (case red (e1, s) of (*in tutti gli altri a casi si va' a ridurre e1 e si ottengono 2 casi*)
+                SOME (e1', s') => SOME(AppCBN (e1', e2), s') (*applicazione di fuznioni in versione CBN*)
+                | _ => NONE))
 
 (*Fine semantica small step*)
 
