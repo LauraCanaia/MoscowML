@@ -165,11 +165,11 @@ fun infertype gamma (Integer n) = SOME int
            (if t2=t3 then SOME t2 else NONE)
          | _ => NONE)
   | infertype gamma (Deref l) 
-    = (case lookup (gamma,l) of
+    = (case lookup (#1 gamma,l) of
            SOME intref => SOME int
          | NONE => NONE)
   | infertype gamma (Assign (l,e)) 
-    = (case (lookup (gamma,l), infertype gamma e) of
+    = (case (lookup (#1 gamma,l), infertype gamma e) of
            (SOME intref,SOME int) => SOME unit
          | _ => NONE)
   | infertype gamma (Skip) = SOME unit
