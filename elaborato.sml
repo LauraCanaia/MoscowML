@@ -41,6 +41,8 @@ datatype exp =
     |   Fn of string * type_L * exp
     |   AppCBN of exp * exp
     |   FixCBN of exp
+    (*#########################*)
+    |   Fibonacci of exp
 
 (*FUNZIONI DI SUPPORTO*)
 (*Funzione di supporto che mi serve nella small-step se il parametro è effettivamente uno dei valori "primitivi"*)
@@ -94,6 +96,7 @@ fun sostituzione expr var (Integer n)           = Integer n
   | sostituzione expr var (Fn (variable, t, e)) = Fn(variable, t, sostituzione expr variable e)
   | sostituzione expr var (AppCBN(e1, e2))      = AppCBN(sostituzione expr var e1, sostituzione expr var e2)
   | sostituzione expr var (FixCBN(e))           = FixCBN(sostituzione expr var e)
+  | sostituzione expr var (Fibonacci(n))        = Fibonacci(n)
 
 (*INIZIO SEMANTICA SMALL STEP -> funzione che "estrae" i valori una volta utilizzati*)
 fun red (Integer n,s) = NONE
@@ -149,6 +152,27 @@ fun red (Integer n,s) = NONE
                 SOME (e1', s') => SOME(AppCBN (e1', e2), s') (*applicazione di fuznioni in versione CBN*)
                 | _ => NONE))
     | red (FixCBN(e), s) = SOME(AppCBN(e, FixCBN(e)), s)(*regole small step = no premesse; fix.e -> e(fix.e)*)
+    (*FIBONACCI => prende in input un intero n e restituisce l'n-esimo elemento della successione
+    -> implemento i casi base e poi utilizzo il ciclo while per calcolare l'elemento della successione
+    ho bisogno di 3 variabili per restituire il valore (li chiamo x, y, z dove x = Fib(n - 1) + Fib(n - 2), y = Fib(n - 1) e z = Fib(n - 2))*)
+    | red (Fibonacci(n), s)
+      = SOME(AppCBN(Fn("n", int, If(
+              Op(Var("n"), uguale, Integer 0), Deref("z"), (*Se n = 0 return 1*)
+              If(Op(Var("n"), uguale, Integer 1), Deref("y"),  (*Se n = 1 return 1*)
+                Seq(While(Op(Op(Var("n"), piu, Integer (~1)), mu, Deref("i")) (*Finchè (n-1) >= counter [rappresentato da i]*)
+                  , Seq( Seq( Seq( 
+                          Assign("x", Op(Deref("y"), piu, Deref("z"))) (*x = Fib(n-1) + Fib(n-2)*)
+                          , Assign("z", Deref("y")) (*Incremento Fib(n-2)*)
+                        ), Assign("y", Deref("x")) (*Incremento Fib(n-1)*)
+                      ), Assign("i", Op(Deref("i"), piu, Integer 1)) (*Incremento il contatore del While*)
+                    )
+                  )(*Fine del while*), Deref("x"))(*Fine prima Seq*)
+              )(*Fine secondo If*)
+            )(*Fine primo If*)
+          )(*Fine Fn*)
+        , n)(*Fine AppCBN*)
+      , s)(*Fine del SOME*)
+    
 
 (*Fine semantica small step*)
 
