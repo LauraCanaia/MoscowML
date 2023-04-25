@@ -209,7 +209,7 @@ fun infertype gamma (Integer n) = SOME int
         SOME (func((func (t1, t2)), (func(t1', t2'))))
         => (if t1 = t1' andalso t2 = t2' then SOME(func(t1, t2)) else NONE) (*controllo che i tipi delle funzioni siano uguali*)
         | _ => NONE) 
- 
+  
 
 (*Funzioni di stampa*)
 fun printop piu = "+"
@@ -235,6 +235,7 @@ fun printexp (Integer n) = Int.toString n
   | printexp (Var n) = "Var(" ^(n) ^")"
   | printexp (Fn (variable, t, e)) = "Fn " ^(printexp e)
   | printexp (AppCBN(e1, e2)) = "App (" ^(printexp e1)^ ", " ^(printexp e2)^ ")"
+  | printexp (FixCBN(e)) = "Fix (" ^(printexp e)^ ")"
 
 
 fun printstore' [] = ""
