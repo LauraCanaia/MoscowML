@@ -40,6 +40,7 @@ datatype exp =
     |   Var of var_T (*Nuovo tipo per la var in quanto non può essere nè int nè un altro tipo primitivo*)
     |   Fn of string * type_L * exp
     |   AppCBN of exp * exp
+    |   FixCBN of exp
 
 (*FUNZIONI DI SUPPORTO*)
 (*Funzione di supporto che mi serve nella small-step se il parametro è effettivamente uno dei valori "primitivi"*)
@@ -91,7 +92,8 @@ fun sostituzione expr var (Integer n)           = Integer n
   (*Espressioni "nuove" per l'elaborato*)
   | sostituzione expr var (Var(x))              = if var = x then expr else (Var(x))
   | sostituzione expr var (Fn (variable, t, e)) = Fn(variable, t, sostituzione expr variable e)
-  | sostituzione expr var (AppCBN(e1, e2))      = AppCBN( sostituzione expr var e1, sostituzione expr var e2)
+  | sostituzione expr var (AppCBN(e1, e2))      = AppCBN(sostituzione expr var e1, sostituzione expr var e2)
+  | sostituzione expr var (FixCBN(e))           = FixCBN(sostituzione expr var e)
 
 (*INIZIO SEMANTICA SMALL STEP -> funzione che "estrae" i valori una volta utilizzati*)
 fun red (Integer n,s) = NONE
@@ -146,6 +148,7 @@ fun red (Integer n,s) = NONE
         | _ => (case red (e1, s) of (*in tutti gli altri a casi si va' a ridurre e1 e si ottengono 2 casi*)
                 SOME (e1', s') => SOME(AppCBN (e1', e2), s') (*applicazione di fuznioni in versione CBN*)
                 | _ => NONE))
+    | red (FixCBN(e), s) = SOME(AppCBN(e, FixCBN(e)), s)(*regole small step = no premesse; fix.e -> e(fix.e)*)
 
 (*Fine semantica small step*)
 
@@ -201,6 +204,11 @@ fun infertype gamma (Integer n) = SOME int
         (SOME (func (t1, t2)), SOME tipo_e2) => (*se e1 risulta tipo func*)
           (if t1 = tipo_e2 then SOME t2 else NONE) (*se t1 e e2 hanno lo stesso tipo allora restituisci il tipo di t2, altrimenti tipo non valido*)
         | _ => NONE) (*in tutti gli altri casi il tipo non è valido*)
+  | infertype gamma (FixCBN(e)) (*[premessa] e : (T1 -> T2) -> (T1 -> T2) => fix.e : T1 -> T2*)
+    = (case (infertype gamma e ) of
+        SOME (func((func (t1, t2)), (func(t1', t2'))))
+        => (if t1 = t1' andalso t2 = t2' then SOME(func(t1, t2)) else NONE) (*controllo che i tipi delle funzioni siano uguali*)
+        | _ => NONE) 
  
 
 (*Funzioni di stampa*)
