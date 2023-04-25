@@ -152,6 +152,7 @@ fun red (Integer n,s) = NONE
                 SOME (e1', s') => SOME(AppCBN (e1', e2), s') (*applicazione di fuznioni in versione CBN*)
                 | _ => NONE))
     | red (FixCBN(e), s) = SOME(AppCBN(e, FixCBN(e)), s)(*regole small step = no premesse; fix.e -> e(fix.e)*)
+    (*##################IL PROBLEMA E' QUI DA QUALCHE PARTE##########################*)
     (*FIBONACCI => prende in input un intero n e restituisce l'n-esimo elemento della successione
     -> implemento i casi base e poi utilizzo il ciclo while per calcolare l'elemento della successione
     ho bisogno di 3 variabili per restituire il valore (li chiamo x, y, z dove x = Fib(n - 1) + Fib(n - 2), y = Fib(n - 1) e z = Fib(n - 2))*)
@@ -166,7 +167,8 @@ fun red (Integer n,s) = NONE
                         ), Assign("y", Deref("x")) (*Incremento Fib(n-1)*)
                       ), Assign("i", Op(Deref("i"), piu, Integer 1)) (*Incremento il contatore del While*)
                     )
-                  )(*Fine del while*), Deref("x"))(*Fine prima Seq*)
+                  )(*Fine del while*), Deref("x")
+                )(*Fine prima Seq*)
               )(*Fine secondo If*)
             )(*Fine primo If*)
           )(*Fine Fn*)
