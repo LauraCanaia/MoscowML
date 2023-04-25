@@ -196,6 +196,11 @@ fun infertype gamma (Integer n) = SOME int
     = (case (infertype (#1 gamma, (variabile, t)::(#2 gamma)) e) of
       (SOME t1) => SOME(func (t, t1)) (*regola di tipaggio secondo la quale T -> T'*)
       | _ => NONE)
+  | infertype gamma (AppCBN(e1, e2)) (* e1 : T -> T'    e2 : T [premesse] = e1e2 : T'*)
+    = (case (infertype gamma e1, infertype gamma e2) of (*controllo il tipo di e1 e di e2*)
+        (SOME (func (t1, t2)), SOME tipo_e2) => (*se e1 risulta tipo func*)
+          (if t1 = tipo_e2 then SOME t2 else NONE) (*se t1 e e2 hanno lo stesso tipo allora restituisci il tipo di t2, altrimenti tipo non valido*)
+        | _ => NONE) (*in tutti gli altri casi il tipo non è valido*)
  
 
 (*Funzioni di stampa*)
@@ -218,9 +223,10 @@ fun printexp (Integer n) = Int.toString n
                                      ^ (printexp e2)
   | printexp (While (e1,e2)) =  "while " ^ (printexp e1 ) 
                                        ^ " do " ^ (printexp e2)
-  (*---------------------------------------------------------*)
+  (*################################################################################*)
   | printexp (Var n) = "Var(" ^(n) ^")"
   | printexp (Fn (variable, t, e)) = "Fn " ^(printexp e)
+  | printexp (AppCBN(e1, e2)) = "App (" ^(printexp e1)^ ", " ^(printexp e2)^ ")"
 
 
 fun printstore' [] = ""
