@@ -233,6 +233,11 @@ fun infertype gamma (Integer n) = SOME int
         SOME (func((func (t1, t2)), (func(t1', t2'))))
         => (if t1 = t1' andalso t2 = t2' then SOME(func(t1, t2)) else NONE) (*controllo che i tipi delle funzioni siano uguali*)
         | _ => NONE) 
+  (*TIPAGGIO FIBONACCI -> molto facile in quanto si occupa solo di verificare che il tipo in entrata e in uscita siano int*)
+  | infertype gamma (Fibonacci(n))
+    = (case (infertype gamma (n)) of
+        (SOME int) => (SOME int)
+        | _ => NONE)
   
 
 (*Funzioni di stampa*)
@@ -260,8 +265,10 @@ fun printexp (Integer n) = Int.toString n
   | printexp (Fn (variable, t, e)) = "Fn " ^(printexp e)
   | printexp (AppCBN(e1, e2)) = "App (" ^(printexp e1)^ ", " ^(printexp e2)^ ")"
   | printexp (FixCBN(e)) = "Fix (" ^(printexp e)^ ")"
+  | printexp (Fibonacci(n)) = "Fibonacci(" ^(printexp n)^ ")"
 
 
+(*Funzioni per stampare a video lo store*)
 fun printstore' [] = ""
   | printstore' ((l,n)::pairs) = l ^ "=" ^ (Int.toString n) 
                                    ^ " " ^ (printstore' pairs)
@@ -273,11 +280,11 @@ fun printstore pairs =
     in
         "{" ^ printstore' pairs' ^ "}" end
 
-
+(*Funzione per stampare a video le configurazioni*)
 fun printconf (e,s) = "< " ^ (printexp e) 
                              ^ " , " ^ (printstore s) ^ " >"
 
-
+(*Funzione per stampare a video le riduzioni*)
 fun printred' (e,s) = 
     case red (e,s) of 
         SOME (e',s') => 
