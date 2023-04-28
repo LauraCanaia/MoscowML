@@ -1,3 +1,9 @@
+(*  FIBONACCI 
+    La successione l'ho fatta partire dal caso 0 quindi i risultati saranno "sfalsati" di 1 rispetto alla successione canonica [quindi 0, 1, 1, 2, 3, 5, 8, ....]
+    Per la stampa del risultato : printred(Fibonacci(Integer n), [("i", 0), ("x", 0), ("y", 1), ("z", 1)]); -> NB n va' sostituito con un intero a piacere
+    Verrà restituito lo store x in quanto conterrà il risultato dell'operazione di calcolo
+*)
+
 load "Listsort";
 load "Int";
 load "Bool";
@@ -152,7 +158,6 @@ fun red (Integer n,s) = NONE
                 SOME (e1', s') => SOME(AppCBN (e1', e2), s') (*applicazione di fuznioni in versione CBN*)
                 | _ => NONE))
     | red (FixCBN(e), s) = SOME(AppCBN(e, FixCBN(e)), s)(*regole small step = no premesse; fix.e -> e(fix.e)*)
-    (*##################IL PROBLEMA E' QUI DA QUALCHE PARTE##########################*)
     (*FIBONACCI => prende in input un intero n e restituisce l'n-esimo elemento della successione
     -> implemento i casi base e poi utilizzo il ciclo while per calcolare l'elemento della successione
     ho bisogno di 3 variabili per restituire il valore (li chiamo x, y, z dove x = Fib(n - 1) + Fib(n - 2), y = Fib(n - 1) e z = Fib(n - 2))*)
@@ -167,7 +172,7 @@ fun red (Integer n,s) = NONE
                         ), Assign("y", Deref("x")) (*Incremento Fib(n-1)*)
                       ), Assign("i", Op(Deref("i"), piu, Integer 1)) (*Incremento il contatore del While*)
                     )
-                  )(*Fine del while*), Deref("x")
+                  )(*Fine del while*), Deref("x") (*Restituisco "n"*)
                 )(*Fine prima Seq*)
               )(*Fine secondo If*)
             )(*Fine primo If*)
