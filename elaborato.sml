@@ -2,6 +2,15 @@
     La successione l'ho fatta partire dal caso 0 quindi i risultati saranno "sfalsati" di 1 rispetto alla successione canonica [quindi 0, 1, 1, 2, 3, 5, 8, ....]
     Per la stampa del risultato : printred(Fibonacci(Integer n), [("i", 0), ("x", 0), ("y", 1), ("z", 1)]); -> NB n va' sostituito con un intero a piacere
     Verrà restituito lo store x in quanto conterrà il risultato dell'operazione di calcolo
+
+    ESEMPI DI OUTPUT:
+    
+    1) printred(Fibonacci(Integer 5), [("i", 0), ("x", 0), ("y", 1), ("z", 0)]); => < 8, {i = 5 x = 8 y = 8 z = 5} >
+
+    2) printred(Fibonacci(Integer 10), [("i", 0), ("x", 0), ("y", 1), ("z", 0)]); => < 89, {i = 10 x = 89 y = 89 z = 55} >
+
+    3) printred(Fibonacci(Integer 15), [("i", 0), ("x", 0), ("y", 1), ("z", 0)]); => < 987, {i = 15 x = 987 y = 987 z = 610} >
+
 *)
 
 load "Listsort";
